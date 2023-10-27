@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: your-deployment-name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: your-app-label
+  template:
+    metadata:
+      labels:
+        app: your-app-label
+    spec:
+      containers:
+      - name: busybox-container
+        image: busybox
+        command:
+        - "/bin/sh"
+        - "-c"
+        - "while true; do echo 'Hello, NFS!'; sleep 10; done"
+        volumeMounts:
+        - name: your-volume-name
+          mountPath: /path/in/container
+      volumes:
+      - name: your-volume-name
+        persistentVolumeClaim:
+          claimName: your-pvc-name
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: your-pvc-name
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: nfs-braporto-local # Use the provided StorageClass
+  resources:
+    requests:
+      storage: 1Gi
