@@ -11,5 +11,7 @@ helm upgrade --install  nfs-subdir-external-provisioner nfs-subdir-external-prov
 Test it with test-deployment:
 
 ```sh
-kubectl apply -f- test-deployment.yaml
+kubectl apply -f test-deployment.yaml
 ```
+
+Para testar suas applicações utilize o storageclass: `nfs-braporto-local`
