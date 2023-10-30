@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: your-deployment-name
+  name: test-nfs-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: your-app-label
+      app: test-nfs-app
   template:
     metadata:
       labels:
-        app: your-app-label
+        app: test-nfs-app
     spec:
       containers:
       - name: busybox-container
@@ -20,20 +20,57 @@ spec:
         - "-c"
         - "while true; do echo 'Hello, NFS!'; sleep 10; done"
         volumeMounts:
-        - name: your-volume-name
+        - name: test-nfs-vol
           mountPath: /path/in/container
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
       volumes:
-      - name: your-volume-name
+      - name: test-nfs-vol
         persistentVolumeClaim:
-          claimName: your-pvc-name
+          claimName: test-nfs-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-nfs-app2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-nfs-app2
+  template:
+    metadata:
+      labels:
+        app: test-nfs-app2
+    spec:
+      containers:
+      - name: busybox-container
+        image: busybox
+        command:
+        - "/bin/sh"
+        - "-c"
+        - "while true; do echo 'Hello, NFS!'; sleep 10; done"
+        volumeMounts:
+        - name: test-nfs-vol
+          mountPath: /path/in/container
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+      volumes:
+      - name: test-nfs-vol
+        persistentVolumeClaim:
+          claimName: test-nfs-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: your-pvc-name
+  name: test-nfs-pvc
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   storageClassName: nfs-braporto-local # Use the provided StorageClass
   resources:
     requests:
